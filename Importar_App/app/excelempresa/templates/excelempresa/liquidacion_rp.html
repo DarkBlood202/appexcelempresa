@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Hoja de liquidacion de repartidor - {{ repartidor.nombre }}</title>
+    <style>
+        body{
+            font-family: sans-serif;
+        }
+
+        h1{
+            color: #0099a8 !important;
+            font-weight: bold;
+        }
+
+        h3, h4{
+            font-weight: normal;
+        }
+
+        th{
+            text-align: left;
+            font-weight: normal;
+            padding: 2px 1px;
+        }
+
+        table{
+            border: 1px solid black;
+        }
+
+        tr.table-head > th{
+            text-align: center !important;
+            font-weight: bold !important;
+        }
+
+        table.borderless {
+            border: 0px transparent !important;
+        }
+
+        th.wow1{
+            font-weight: bold;
+            font-size: 24px;
+            text-align: center;
+            padding: 2px;
+        }
+
+        th.wow2{
+            font-weight: bold;
+            font-size: 24px;
+            text-align: right;
+            background-color: #000000;
+            color: #ffffff;
+            padding: 2px;
+        }
+    </style>
+</head>
+<body>
+    <table class="borderless">
+        <tr>
+            <th><img src="{% static 'excelempresa/logo.png' %}" alt="Imagen de empresa"></th>
+            <th style="text-align: right;">HOJA DE LIQUIDACION</th>
+        </tr>
+        <tr>
+            <th> </th>
+            <th style="text-align: right;">{% now "d/m/Y G:i" %}</th>
+        </tr>
+    </table>
+    <div>
+        <h1>NOMBRE REPARTIDOR</h1>
+        <h2>{{ repartidor.nombre }}</h2>
+    </div>
+    <table class="borderless">
+        <tr>
+            <th>ID REPARTIDOR</th>
+            <th>FECHA INICIO</th>
+            <th>FECHA FIN</th>
+            <th>REPARTIDOR</th>
+            <th>EMAIL</th>
+            <th> </th>
+            <th>TELEFONO</th>
+        </tr>
+        <tr>
+            <th>{{ repartidor.id }}</th>
+            <th>{{ fecha_inicio }}</th>
+            <th>{{ fecha_fin }}</th>
+            <th>{{ repartidor.nombre }}</th>
+            <th>{{ repartidor.email }}</th>
+            <th> </th>
+            <th>{{ repartidor.telefono }}</th>
+        </tr>
+    </table>
+    <hr>
+    <div>
+        <h1>DATOS</h1>
+        <table class="borderless">
+            <tr>
+                <th>RAZON SOCIAL</th>
+                <th> </th>
+                <th>CONTACTO</th>
+                <th> </th>
+                <th>BANCO</th>
+                <th></th>
+            </tr>
+            <tr>
+                <th>{{ repartidor.nombre }}</th>
+                <th> </th>
+                <th>{{ repartidor.nombre }}</th>
+                <th> </th>
+                <th>{{ repartidor.cuenta_bancaria }}</th>
+                <th> </th>
+            </tr>
+            <tr>
+                <th>{{ repartidor.direccion }}</th>
+                <th> </th>
+                <th>{{ repartidor.email }}</th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+            </tr>
+            <tr>
+                <th>{{ repartidor.codigo_postal }}</th>
+                <th>{{ repartidor.poblacion }}</th>
+                <th>{{ repartidor.telefono }}</th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+            </tr>
+            <tr>
+                <th>{{ repartidor.provincia }}</th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+            </tr>
+            <tr>
+                <th>{{ repartidor.nif_cif }}</th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+            </tr>
+        </table>
+    </div>
+    <hr>
+    <div>
+        <h1>PEDIDOS</h1>
+        <table class="borderless">
+            <tr>
+                <th>N° DE REPARTOS</th>
+                <th>IMPORTE RECAUDADO</th>
+                <th>IMPORTE I.V.A.</th>
+                <th>IMPORTE SIN I.V.A.</th>
+            </tr>
+            <tr>
+                <th class="wow1">{{ cantidad_repartos }}</th>
+                <th class="wow2">{{ importe_recaudado }}</th>
+                <th class="wow2">{{ importe_iva }}</th>
+                <th class="wow2">{{ importe_sin_iva }}</th>
+            </tr>
+        </table>
+    </div>
+    <hr>
+    <div>
+        <h1>DETALLES</h1>
+        <table>
+            <tr class="table-head">
+                <th>RESTAURANTE</th>
+                <th>N° DE PEDIDO</th>
+                <th>N° DE TAREA</th>
+                <th>IMPORTE</th>
+                <th>I.V.A.</th>
+                <th>IMPORTE SIN I.V.A.</th>
+            </tr>
+            {% for envio in lista_envios %}
+                {% if envio.pedido.fecha >= fecha_inicio and envio.pedido.fecha <= fecha_fin %}
+                    <tr>
+                        <th>{{ envio.pedido.restaurante.nombre }}</th>
+                        <th>{{ envio.pedido.numero }}</th>
+                        <th>{{ envio.pedido.task_id }}</th>
+                        <th>{{ envio.coste_envio }}</th>
+                        <th>{{ envio.iva }}</th>
+                        <th>{{ envio.importe_sin_iva }}</th>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

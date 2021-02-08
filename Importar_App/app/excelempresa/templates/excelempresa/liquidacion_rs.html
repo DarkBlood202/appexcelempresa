@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+{% load static %}
+{% load extra_filters %}
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Hoja de liquidacion de restaurante - {{ restaurante.nombre }}</title>
+    <style>
+        body{
+            font-family: sans-serif;
+        }
+
+        h1{
+            color: #0099a8 !important;
+            font-weight: bold;
+        }
+
+        h3, h4{
+            font-weight: normal;
+        }
+
+        th{
+            text-align: left;
+            font-weight: normal;
+            padding: 2px 1px;
+        }
+
+        table{
+            border: 1px solid black;
+        }
+
+        tr.table-head > th{
+            text-align: center !important;
+            font-weight: bold !important;
+        }
+
+        table.borderless {
+            border: 0px transparent !important;
+        }
+
+        th.wow1{
+            font-weight: bold;
+            font-size: 24px;
+            text-align: center;
+            padding: 2px;
+        }
+
+        th.wow2{
+            font-weight: bold;
+            font-size: 24px;
+            text-align: right;
+            background-color: #000000;
+            color: #ffffff;
+            padding: 2px;
+        }
+    </style>
+</head>
+<body>
+    <table class="borderless">
+        <tr>
+            <th><img src="{% static 'excelempresa/logo.png' %}" alt="Imagen de empresa"></th>
+            <th style="text-align: right;">HOJA DE LIQUIDACION</th>
+        </tr>
+        <tr>
+            <th> </th>
+            <th style="text-align: right;">{% now "d/m/Y G:i" %}</th>
+        </tr>
+    </table>
+    <div>
+        <h1>NOMBRE RESTAURANTE</h1>
+        <h2>{{ restaurante.nombre }}</h2>
+    </div>
+    <table class="borderless">
+        <tr>
+            <th>ID RESTAURANTE</th>
+            <th>FECHA INICIO</th>
+            <th>FECHA FIN</th>
+            <th>USUARIO</th>
+            <th>EMAIL</th>
+            <th> </th>
+            <th>TELEFONO</th>
+        </tr>
+        <tr>
+            <th>{{ restaurante.id }}</th>
+            <th>{{ fecha_inicio }}</th>
+            <th>{{ fecha_fin }}</th>
+            <th>{{ restaurante.nombre }}</th>
+            <th>{{ restaurante.email }}</th>
+            <th> </th>
+            <th>{{ restaurante.telefono }}</th>
+        </tr>    
+    </table>
+    <hr>
+    <div>
+        <h1>DATOS</h1>
+        <table class="borderless">
+            <tr>
+                <th>RAZON SOCIAL</th>
+                <th> </th>
+                <th>CONTACTO</th>
+                <th> </th>
+                <th>BANCO</th>
+                <th></th>
+            </tr>
+            <tr>
+                <th>{{ restaurante.razon_social }}</th>
+                <th> </th>
+                <th>{{ restaurante.nombre }}</th>
+                <th> </th>
+                <th>{{ restaurante.cuenta_bancaria }}</th>
+                <th> </th>
+            </tr>
+            <tr>
+                <th>{{ restaurante.direccion }}</th>
+                <th> </th>
+                <th>{{ restaurante.email }}</th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+            </tr>
+            <tr>
+                <th>{{ restaurante.codigo_postal }}</th>
+                <th>{{ restaurante.poblacion }}</th>
+                <th>{{ restaurante.telefono }}</th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+            </tr>
+            <tr>
+                <th>{{ restaurante.provincia }}</th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+            </tr>
+            <tr>
+                <th>{{ restaurante.nif_cif }}</th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+            </tr>
+        </table>
+    <hr>
+    <div>
+        <h1>PEDIDOS</h1>
+        <table class="borderless">
+            <tr>
+                <th>N° DE PEDIDOS REALIZADOS</th>
+                <th>IMPORTE TOTAL RECAUDADO</th>
+                <th>GASTOS DE ENVÍO</th>
+                <th>IMPORTE FINAL</th>
+            </tr>
+            <tr>
+                <th class="wow1">{{ cantidad_pedidos }}</th>
+                <th class="wow1">{{ total_recaudado }}</th>
+                <th class="wow1">{{ gastos_envio }}</th>
+                <th class="wow1">{{ importe_final }}</th>
+            </tr>
+            <tr>
+                <th> </th>
+                <th> </th>
+                <th>* Gasto destinado a repartidor</th>
+                <th> </th>
+            </tr>
+        </table>
+        <table class="borderless">
+            <tr>
+                <th>IMPORTE SIN I.V.A.</th>
+                <th>IMPORTE I.V.A.</th>
+                <th>IMPORTE A TRANSFERIR</th>
+                <th>* Porcentaje destinado a gastos de envío</th>
+            </tr>
+            <tr>
+                <th class="wow2">{{ importe_sin_iva }}</th>
+                <th class="wow2">{{ importe_iva }}</th>
+                <th class="wow2">{{ importe_final }}</th>
+                <th class="wow1">{{ porcentaje_gastos }}</th>
+            </tr>
+        </table>
+    </div>
+    <hr>
+    <div>
+        <h1>DETALLES</h1>
+        <table>
+            <tr class="table-head">
+                <th>RESTAURANTE</th>
+                <th>N° PEDIDO</th>
+                <th>ESTADO</th>
+                <th>TOTAL</th>
+                <th>TIPO ENVÍO</th>
+                <th>COSTE KM 1</th>
+                <th>COSTE KM ADICIONAL</th>
+                <th>GASTO ENVIO</th>
+                <th>IMPORTE</th>
+                <th>PORCENTAJE</th>
+            </tr>
+            {% for envio in lista_envios %}
+                {% if envio.pedido.fecha >= fecha_inicio and envio.pedido.fecha <= fecha_fin %}
+                    <tr>
+                        <th>{{ envio.pedido.restaurante.nombre }}</th>
+                        <th>{{ envio.pedido.numero }}</th>
+                        <th>{{ envio.pedido.estado }}</th>
+                        <th>{{ envio.pedido.subtotal_pedido }}</th>
+                        <th>{{ envio.pedido.tipo }}</th>
+                        <th>{{ envio.pedido.restaurante.precio_base_envio }}</th>
+                        <th>0.6</th>
+                        <th>{{ envio.coste_envio|subs:envio.pedido.restaurante.precio_base_envio }}</th>
+                        <th>{{ envio.pedido.total_pedido }}</th>
+                        <th>{{ envio.pedido.porcentaje }}</th>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+        <table class="borderless">
+            <tr>
+                <th> </th>
+                <th> </th>
+                <th>TOTAL RECAUDADO</th>
+                <th>{{ total_recaudado }}</th>
+                <th> </th>
+                <th> </th>
+                <th>GASTO ENVÍO</th>
+                <th>{{ gastos_envio }}</th>
+                <th> </th>
+                <th> </th>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
